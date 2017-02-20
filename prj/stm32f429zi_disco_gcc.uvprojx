@@ -278,7 +278,7 @@
             <wLevel>3</wLevel>
             <uThumb>1</uThumb>
             <VariousControls>
-              <MiscControls>-std=c99 -Wall -fno-builtin -Wno-cpp</MiscControls>
+              <MiscControls>-std=c99 -Wall -fno-builtin -Wno-cpp -DBOARD_USES_EMC -DBOARD_USES_OWN_HEAP_TABLE</MiscControls>
               <Define>STM32F429ZI</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\..\amos;..\src</IncludePath>
@@ -413,6 +413,11 @@
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\amos\hal\stm32f4\gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>emc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\amos\hal\stm32f4\emc.c</FilePath>
             </File>
           </Files>
         </Group>
