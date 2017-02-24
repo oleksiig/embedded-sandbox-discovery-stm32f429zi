@@ -6,11 +6,16 @@
 
 #include <kernel/amos.h>
 #include <kernel/utils/log.h>
-#include <drivers/display/display.h>
+#include <drivers/display/ili9341.h>
 
 /* -------------------------------------------------------------------- */
 int main(void)
 {
+    DRV_Display_t pDisp;
+    DRV_ILI9341_Init(&pDisp);
+
+    pDisp.On();
+
     while(1)
     {
         LOGD("SysTick: %ld", HAL_SysTick_GetCount());

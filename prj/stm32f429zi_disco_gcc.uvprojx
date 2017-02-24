@@ -124,47 +124,6 @@
             <HexOffset>0</HexOffset>
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
-          <Simulator>
-            <UseSimulator>0</UseSimulator>
-            <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>0</RunToMain>
-            <RestoreBreakpoints>1</RestoreBreakpoints>
-            <RestoreWatchpoints>1</RestoreWatchpoints>
-            <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
-            <RestoreFunctions>1</RestoreFunctions>
-            <RestoreToolbox>1</RestoreToolbox>
-            <LimitSpeedToRealTime>1</LimitSpeedToRealTime>
-            <RestoreSysVw>1</RestoreSysVw>
-          </Simulator>
-          <Target>
-            <UseTarget>1</UseTarget>
-            <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
-            <RunToMain>0</RunToMain>
-            <RestoreBreakpoints>1</RestoreBreakpoints>
-            <RestoreWatchpoints>1</RestoreWatchpoints>
-            <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
-            <RestoreFunctions>0</RestoreFunctions>
-            <RestoreToolbox>1</RestoreToolbox>
-            <RestoreTracepoints>1</RestoreTracepoints>
-            <RestoreSysVw>1</RestoreSysVw>
-          </Target>
-          <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>11</TargetSelection>
-          <SimDlls>
-            <CpuDll></CpuDll>
-            <CpuDllArguments></CpuDllArguments>
-            <PeripheralDll></PeripheralDll>
-            <PeripheralDllArguments></PeripheralDllArguments>
-            <InitializationFile></InitializationFile>
-          </SimDlls>
-          <TargetDlls>
-            <CpuDll></CpuDll>
-            <CpuDllArguments></CpuDllArguments>
-            <PeripheralDll></PeripheralDll>
-            <PeripheralDllArguments></PeripheralDllArguments>
-            <InitializationFile></InitializationFile>
-            <Driver>STLink\ST-LINKIII-KEIL_SWO.dll</Driver>
-          </TargetDlls>
         </DebugOption>
         <Utilities>
           <Flash1>
@@ -278,7 +237,7 @@
             <wLevel>3</wLevel>
             <uThumb>1</uThumb>
             <VariousControls>
-              <MiscControls>-std=c99 -Wall -fno-builtin -Wno-cpp -DBOARD_USES_EMC -DBOARD_USES_OWN_HEAP_TABLE</MiscControls>
+              <MiscControls>-std=c99 -Wall -fno-builtin -Wno-cpp -Wextra -DBOARD_USES_EMC -DBOARD_USES_OWN_HEAP_TABLE -DSPI_USES_DMA</MiscControls>
               <Define>STM32F429ZI</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\..\amos;..\src</IncludePath>
@@ -419,10 +378,42 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\amos\hal\stm32f4\emc.c</FilePath>
             </File>
+            <File>
+              <FileName>dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\amos\hal\stm32f4\dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\amos\hal\stm32f4\uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcdif.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\amos\hal\stm32f4\lcdif.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\amos\hal\stm32f4\spi.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>amos/drivers</GroupName>
+          <Files>
+            <File>
+              <FileName>console_serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\amos\drivers\console\console_serial.c</FilePath>
+            </File>
+            <File>
+              <FileName>ili9341.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\amos\drivers\display\ili9341.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>amos/utils</GroupName>
@@ -462,5 +453,11 @@
       </Groups>
     </Target>
   </Targets>
+
+  <RTE>
+    <apis/>
+    <components/>
+    <files/>
+  </RTE>
 
 </Project>

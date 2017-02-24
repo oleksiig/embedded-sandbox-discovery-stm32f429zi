@@ -4,7 +4,7 @@
 
 #include <kernel/amos.h>
 #include <drivers/console/console_serial.h>
-#include <drivers/display/display.h>
+#include <drivers/display/ili9341.h>
 
 /* -------------------------------------------------------------------- */
 /* OVERDRIVE OFF!! */
@@ -168,15 +168,58 @@ const HAL_EmcMem_t g_pBoardMemory[] =
     {0, 0, 0, NULL}
 };
 
-/* -------------------------------------------------------------------- */
+/* ------------------------------------------------------------------ */
 BOARD_DESC("STM32F429ZI-DISCOVERY",
             g_pBoardClocks,
             g_pBoardPins,
             g_pBoardMemory);
 
-/* -------------------------------------------------------------------- */
+/* ------------------------------------------------------------------ */
 const DRV_SerialConsoleDesc_t g_pSerialConsole =
 {
-    .pPort = USART1,
-    .nBaudrate = 115200
+    .pPort          = USART1,
+    .nBaudrate      = 115200
+};
+
+/* ------------------------------------------------------------------ */
+const HAL_DMA_Map_t g_pDMA_MapTable[] =
+{
+    { SPI5, e_HAL_DMA_Periph2Mem, e_HAL_DMA_CH_14 }, /* RX */
+    { SPI5, e_HAL_DMA_Mem2Periph, e_HAL_DMA_CH_15 }, /* TX */
+
+    /* End of list */
+    DMA_MAP_END_OF_LIST
+};
+
+/* ------------------------------------------------------------------ */
+const HAL_I2C_PortDesc_t g_pI2CHB_Ports[] =
+{
+    { I2C3, 100000, HAL_I2C_M_MASTER },
+
+    /* End of list */
+    { NULL, 0, 0 }
+};
+
+/* ------------------------------------------------------------------ */
+const HAL_SPI_PortDesc_t g_SPI_PortsList[] =
+{
+    {
+        .pPort      = SPI5,
+        .BaudRate   = { 15000000, 100000000 }, /* min=1MHz, max=10MHz */
+        .Flags      = (HAL_SPI_M_MASTER | HAL_SPI_MODE0 | HAL_SPI_8BIT_WORD | HAL_SPI_CS_MODE_SW) 
+    },
+
+    /* End of list */
+    { NULL, {0, 0}, 0 }
+};
+
+/* ------------------------------------------------------------------ */
+const ILI9341_Desc_t g_pILI9341 =
+{
+    .pPort          = SPI5,
+    .pCS            = { GPIOC, GPIO_BIT2, HAL_SPI_CS_SW_MODE_BLOCK },
+    .pReset         = { NULL, 0 }, /* Reset pin connected to global nRST */
+    .pDC            = { GPIOD, GPIO_BIT13 },
+    .Orientation    = e_DISP_CW_0,
+    .Fmt            = e_DISP_CF_RGB_565
 };
