@@ -15,7 +15,7 @@ const HAL_ClockSource_t g_pBoardClocks[] =
     { "HCLK",       168000000,  (CLK_TYPE_AHB   | CLK_SRC_PLL0)  },
     { "PCLK1",       42000000,  (CLK_TYPE_APB1)                  },
     { "PCLK2",       84000000,  (CLK_TYPE_APB2)                  },
-
+    { "LTDC",         6000000,  (CLK_TYPE_LCDC)                  }, /* panel pixel clock */
     { NULL, 0, 0 } /* End of list */
 };
 
@@ -184,11 +184,11 @@ const DRV_SerialConsoleDesc_t g_pSerialConsole =
 /* ------------------------------------------------------------------ */
 const HAL_DMA_Map_t g_pDMA_MapTable[] =
 {
-    { SPI5, e_HAL_DMA_Periph2Mem, e_HAL_DMA_CH_14 }, /* RX */
-    { SPI5, e_HAL_DMA_Mem2Periph, e_HAL_DMA_CH_15 }, /* TX */
+    DMA_MAP(DMA2, DMA2_Stream5, SPI5, e_HAL_DMA_Periph2Mem, 7), /* RX */
+    DMA_MAP(DMA2, DMA2_Stream6, SPI5, e_HAL_DMA_Mem2Periph, 7), /* TX */
 
     /* End of list */
-    DMA_MAP_END_OF_LIST
+    DMA_MAP(NULL, NULL, NULL, 0, 0)
 };
 
 /* ------------------------------------------------------------------ */
@@ -205,12 +205,25 @@ const HAL_SPI_PortDesc_t g_SPI_PortsList[] =
 {
     {
         .pPort      = SPI5,
-        .BaudRate   = { 15000000, 100000000 }, /* min=1MHz, max=10MHz */
+        .BaudRate   = { 15000000, 15000000 }, /* min=15MHz, max=15MHz */
         .Flags      = (HAL_SPI_M_MASTER | HAL_SPI_MODE0 | HAL_SPI_8BIT_WORD | HAL_SPI_CS_MODE_SW) 
     },
 
     /* End of list */
     { NULL, {0, 0}, 0 }
+};
+
+/* ------------------------------------------------------------------ */
+const HAL_I2C_PortDesc_t g_I2C_PortsList[] =
+{
+    {
+        .pPort      = I2C3,
+        .nBaudRate  = 100000,
+        .Flags      = HAL_I2C_M_MASTER
+    },
+
+    /* End of list */
+    { NULL, 0, 0 }
 };
 
 /* ------------------------------------------------------------------ */

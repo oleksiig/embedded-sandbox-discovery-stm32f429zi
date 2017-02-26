@@ -14,7 +14,7 @@
         <TargetCommonOption>
           <Device>STM32F429ZITx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F4xx_DFP.2.6.0</PackID>
+          <PackID>Keil.STM32F4xx_DFP.2.7.0</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IROM(0x08000000,0x200000) IRAM(0x20000000,0x30000) IRAM2(0x10000000,0x10000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -237,7 +237,7 @@
             <wLevel>3</wLevel>
             <uThumb>1</uThumb>
             <VariousControls>
-              <MiscControls>-std=c99 -Wall -fno-builtin -Wno-cpp -Wextra -DBOARD_USES_EMC -DBOARD_USES_OWN_HEAP_TABLE -DSPI_USES_DMA</MiscControls>
+              <MiscControls>-std=c99 -Wall -fno-builtin -Wno-cpp -Wextra -DBOARD_USES_EMC -DBOARD_USES_OWN_HEAP_TABLE -DSPI_USES_DMA -DILI9341_LCDIF_INTERFACE</MiscControls>
               <Define>STM32F429ZI</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\..\amos;..\src</IncludePath>
@@ -384,11 +384,6 @@
               <FilePath>..\..\..\amos\hal\stm32f4\dma.c</FilePath>
             </File>
             <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\amos\hal\stm32f4\uart.c</FilePath>
-            </File>
-            <File>
               <FileName>lcdif.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\amos\hal\stm32f4\lcdif.c</FilePath>
@@ -398,16 +393,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\amos\hal\stm32f4\spi.c</FilePath>
             </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\amos\hal\stm32f4\i2c.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>amos/drivers</GroupName>
           <Files>
-            <File>
-              <FileName>console_serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\amos\drivers\console\console_serial.c</FilePath>
-            </File>
             <File>
               <FileName>ili9341.c</FileName>
               <FileType>1</FileType>
