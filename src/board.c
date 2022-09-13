@@ -1,26 +1,38 @@
 /**
- * Brief: STM32F429ZI-DISCOVERY
+ * Brief: STM32F429I-DISCOVERY
  **/
 
-#include <kernel/amos.h>
-#include <drivers/console/console_serial.h>
-#include <drivers/display/ili9341.h>
+#include <stdint.h>
+
+#include "utils/memory.h"
+#include "board_heap_table.h"
+
+#include "hal/hal_mcu.h"
+#include "hal/hal_clock.h"
+#include "hal/hal_gpio.h"
+#include "hal/hal_dma.h"
+#include "hal/hal_i2c.h"
+#include "hal/hal_spi.h"
+#include "hal/hal_emc.h"
+
+#include "drivers/console/console_uart.h"
+#include "drivers/display/ili9341.h"
 
 /* -------------------------------------------------------------------- */
 /* OVERDRIVE OFF!! */
-const HAL_ClockSource_t g_pBoardClocks[] =
+const HAL_ClkDesc_t g_pClkList[] =
 {
-    { "OSC",          8000000,  (CLK_TYPE_XTAL  | CLK_MAIN_OSC)  },
-    { "PLL",        168000000,  (CLK_TYPE_PLL0  | CLK_SRC_XTAL)  },
-    { "HCLK",       168000000,  (CLK_TYPE_AHB   | CLK_SRC_PLL0)  },
-    { "PCLK1",       42000000,  (CLK_TYPE_APB1)                  },
-    { "PCLK2",       84000000,  (CLK_TYPE_APB2)                  },
-    { "LTDC",         6000000,  (CLK_TYPE_LCDC)                  }, /* panel pixel clock */
-    { NULL, 0, 0 } /* End of list */
+    { 8000000,    (CLK_TYPE_XTAL  | CLK_MAIN_OSC)  },
+    { 168000000,  (CLK_TYPE_PLL0  | CLK_SRC_XTAL)  },
+    { 168000000,  (CLK_TYPE_AHB   | CLK_SRC_PLL0)  },
+    { 42000000,   (CLK_TYPE_APB1)                  },
+    { 84000000,   (CLK_TYPE_APB2)                  },
+    { 6000000,    (CLK_TYPE_LCDC)                  }, /* panel pixel clock */
+    { 0, 0 } /* End of list */
 };
 
 /* -------------------------------------------------------------------- */
-const HAL_GpioPin_t g_pBoardPins[] =
+const HAL_GpioPin_t g_pPinList[] =
 {
     /* Debug UART */
     GPIO_CONFIG(GPIOA, GPIO_BIT9,   GPIO_AF7,       GPIO_OUT_PUSH_PULL),   // VCP_TX (USART1_TX)
@@ -137,6 +149,60 @@ const HAL_GpioPin_t g_pBoardPins[] =
     GPIO_CONFIG(NULL, 0, 0, 0)
 };
 
+/* ------------------------------------------------------------------ */
+const HAL_DMA_Map_t g_pDMA_MapTable[] =
+{
+    DMA_MAP(DMA2, DMA2_Stream5, SPI5, e_HAL_DMA_Periph2Mem, 7), /* RX */
+    DMA_MAP(DMA2, DMA2_Stream6, SPI5, e_HAL_DMA_Mem2Periph, 7), /* TX */
+
+    /* End of list */
+    DMA_MAP(NULL, NULL, NULL, 0, 0)
+};
+
+/* ------------------------------------------------------------------ */
+const DRV_SerialConsoleDesc_t g_pSerialConsole =
+{
+    .pPort          = USART1,
+    .nBaudrate      = 115200
+};
+
+/* ------------------------------------------------------------------ */
+const HAL_SPI_PortDesc_t g_SPI_PortsList[] =
+{
+    {
+        .pPort      = SPI5,
+        .BaudRate   = { 21000000, 21000000 }, /* 84/4MHz */
+        .Flags      = (HAL_SPI_M_MASTER | HAL_SPI_MODE0 | HAL_SPI_8BIT_WORD | HAL_SPI_CS_MODE_SW) 
+    },
+
+    /* End of list */
+    { NULL, {0, 0}, 0 }
+};
+
+/* ------------------------------------------------------------------ */
+const HAL_I2C_PortDesc_t g_I2C_PortsList[] =
+{
+    {
+        .pPort      = I2C3,
+        .BaudRate  = e_HAL_I2C_BR_Standard,
+        .Flags      = HAL_I2C_M_MASTER
+    },
+
+    /* End of list */
+    { NULL, 0, 0 }
+};
+
+/* ------------------------------------------------------------------ */
+const ILI9341_Desc_t g_pILI9341 =
+{
+    .pPort          = SPI5,
+    .pCS            = { GPIOC, GPIO_BIT2 },
+    .pReset         = { NULL, 0 }, /* Reset pin connected to global nRST */
+    .pDC            = { GPIOD, GPIO_BIT13 },
+    .Orientation    = e_DISP_CW_90,
+    .Fmt            = e_DISP_CF_RGB565
+};
+
 /* -------------------------------------------------------------------- */
 /* IS42S16400J-7 (64-MBIT)*/
 const HAL_EMC_SDRAM_Config_t g_pIS42S16400J =
@@ -161,78 +227,9 @@ const HAL_EMC_SDRAM_Config_t g_pIS42S16400J =
     .tCASd      = 3,
 };
 
-const HAL_EmcMem_t g_pBoardMemory[] =
+const HAL_EmcMem_t g_EMC_MemList[] =
 {
     {EMC_MEM_SDRAM, 0xD0000000, 0x800000, &g_pIS42S16400J},
     /* End of list */
     {0, 0, 0, NULL}
-};
-
-/* ------------------------------------------------------------------ */
-BOARD_DESC("STM32F429ZI-DISCOVERY",
-            g_pBoardClocks,
-            g_pBoardPins,
-            g_pBoardMemory);
-
-/* ------------------------------------------------------------------ */
-const DRV_SerialConsoleDesc_t g_pSerialConsole =
-{
-    .pPort          = USART1,
-    .nBaudrate      = 115200
-};
-
-/* ------------------------------------------------------------------ */
-const HAL_DMA_Map_t g_pDMA_MapTable[] =
-{
-    DMA_MAP(DMA2, DMA2_Stream5, SPI5, e_HAL_DMA_Periph2Mem, 7), /* RX */
-    DMA_MAP(DMA2, DMA2_Stream6, SPI5, e_HAL_DMA_Mem2Periph, 7), /* TX */
-
-    /* End of list */
-    DMA_MAP(NULL, NULL, NULL, 0, 0)
-};
-
-/* ------------------------------------------------------------------ */
-const HAL_I2C_PortDesc_t g_pI2CHB_Ports[] =
-{
-    { I2C3, 100000, HAL_I2C_M_MASTER },
-
-    /* End of list */
-    { NULL, 0, 0 }
-};
-
-/* ------------------------------------------------------------------ */
-const HAL_SPI_PortDesc_t g_SPI_PortsList[] =
-{
-    {
-        .pPort      = SPI5,
-        .BaudRate   = { 15000000, 15000000 }, /* min=15MHz, max=15MHz */
-        .Flags      = (HAL_SPI_M_MASTER | HAL_SPI_MODE0 | HAL_SPI_8BIT_WORD | HAL_SPI_CS_MODE_SW) 
-    },
-
-    /* End of list */
-    { NULL, {0, 0}, 0 }
-};
-
-/* ------------------------------------------------------------------ */
-const HAL_I2C_PortDesc_t g_I2C_PortsList[] =
-{
-    {
-        .pPort      = I2C3,
-        .nBaudRate  = 100000,
-        .Flags      = HAL_I2C_M_MASTER
-    },
-
-    /* End of list */
-    { NULL, 0, 0 }
-};
-
-/* ------------------------------------------------------------------ */
-const ILI9341_Desc_t g_pILI9341 =
-{
-    .pPort          = SPI5,
-    .pCS            = { GPIOC, GPIO_BIT2, HAL_SPI_CS_SW_MODE_BLOCK },
-    .pReset         = { NULL, 0 }, /* Reset pin connected to global nRST */
-    .pDC            = { GPIOD, GPIO_BIT13 },
-    .Orientation    = e_DISP_CW_0,
-    .Fmt            = e_DISP_CF_RGB_565
 };
